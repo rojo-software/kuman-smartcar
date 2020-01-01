@@ -33,7 +33,7 @@ Uses ultrasonic detector to measure distance from object in front of car.
 Returns value in cm.
 
 # TODO
-Add variable speed control for motors
-Add sample & hold for ultrasonic measurement
-Add support for IR detector
-Add support for IR line following
+* Add variable speed control for motors
+* Add sample & hold for ultrasonic measurement
+* Add support for IR detector
+* Add support for IR line following
