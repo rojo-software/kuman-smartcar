@@ -1,0 +1,25 @@
+#######################################
+# Syntax Coloring Map For Kuman Smart Care
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+begin        KEYWORD2
+forward  KEYWORD2
+reverse    KEYWORD2
+spinLeft  KEYWORD2
+spinRight KEYWORD2
+stop KEYWORD2
+soundHorn KEYWORD2
+flashLeftAndRightLights KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+
