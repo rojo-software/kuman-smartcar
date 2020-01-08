@@ -39,10 +39,11 @@
 #define SPIN_LEFT_SPEED_PWM 180
 #define SPIN_RIGHT_SPEED_PWM 180
 
+decode_results irRemoteResults; 
+IRrecv irRemote(IR_RX);
+
 void KumanSmartCar::begin(void)
 {
-    IRrecv irrecv( IR_RX);
-
     pinMode(LEFT_LED, OUTPUT);
     pinMode(RIGHT_LED, OUTPUT);
 
@@ -58,8 +59,15 @@ void KumanSmartCar::begin(void)
     pinMode(LEFT_LED, OUTPUT);
     pinMode(RIGHT_LED, OUTPUT);
 
-    pinMode( ULTRASONIC_ECHO, INPUT); 
+    pinMode(ULTRASONIC_ECHO, INPUT); 
     pinMode(ULTRASONIC_TRIGGER, OUTPUT);
+
+    pinMode(LEFT_INFRARED_TRACK, INPUT);
+    pinMode(RIGHT_INFRARED_TRACK, INPUT);
+
+    irRemote.enableIRIn();
+
+    this->lastFrontDistance =10; // Initialise with arbitrary value
 
 }
 
@@ -122,7 +130,8 @@ void KumanSmartCar::soundHorn(unsigned int time)
 /*
  * Flash lights L&R for specified number of cycles
  */
-void KumanSmartCar::flashLeftAndRightLights(unsigned int numCycles) {
+void KumanSmartCar::flashLeftAndRightLights(unsigned int numCycles) 
+{
   for (int cycles=0;cycles < numCycles; cycles++)
   {
     digitalWrite(LEFT_LED,HIGH);
@@ -156,7 +165,7 @@ void KumanSmartCar::waitForButtonPress(void)
 /*
  * Measure front distance in cm
  */
-unsigned long KumanSmartCar::measureFrontDistance(void)
+unsigned int KumanSmartCar::measureFrontDistance(void)
 {
   digitalWrite(ULTRASONIC_TRIGGER, LOW);    // set trig port low level for 5μs
   delayMicroseconds(5);
@@ -164,10 +173,73 @@ unsigned long KumanSmartCar::measureFrontDistance(void)
   delayMicroseconds(10);
   digitalWrite(ULTRASONIC_TRIGGER, LOW);    // set trig port low level
 
-  unsigned long pulseTime = pulseIn(ULTRASONIC_ECHO, HIGH);
+  unsigned long pulseTime = pulseIn(ULTRASONIC_ECHO, HIGH); // Returns value in microseconds
+
+  // Use formula: 2*Distance(m) =(time(s) * 344(m/s)) 
+  // ==> 2 *Distance(cm) = time(μs) * 0.0344(cm/μs)
+  // ==> Distance(cm) = time(μs) * 0.0172
+  // Express 0.0172 as fixed point value 1124 / 65536 (2^16)
   unsigned long distance = (pulseTime * 1124) >> 16; // This gives the distance in cm
 
-  // TODO bound distance to be realistic, sample & hold in case of spurious measurement?
+   // Realistically sensor can read upto ~200cm range.  Sometimes we get spurious results which are much larger...
+  //  If this happens then use previous measurement value.
+  if (distance > 1000)
+	distance = this->lastFrontDistance;
 
-  return distance;
+  unsigned int boundedDistance = (int) distance;
+  this->lastFrontDistance = boundedDistance;
+  return boundedDistance;
+}
+
+/* 
+* Read state of left IR sensor
+*/ 
+unsigned int KumanSmartCar::readLeftIRSensor(void)   
+{
+	unsigned int sl;
+	sl = digitalRead(LEFT_INFRARED_TRACK);
+	return sl;
+}
+
+/* 
+* Read state of right IR sensor
+*/ 
+unsigned int KumanSmartCar::readRightIRSensor(void)   
+{
+	unsigned int sr;
+	sr = digitalRead(RIGHT_INFRARED_TRACK);
+	return sr;
+}
+
+/* 
+* IR remote handling
+*/ 
+remoteControlKeys KumanSmartCar::readIRRemote(void)
+{
+        remoteControlKeys decodedValue = NO_KEY_PRESSED; 
+        if (irRemote.decode(&irRemoteResults)) //Infrared received result
+        {
+	       switch(irRemoteResults.value) {
+                   case 0x00FDB04F: decodedValue = KEY_0; break;
+		   case 0x00FD00FF: decodedValue =  KEY_1; break;
+		   case 0x00FD807F: decodedValue =  KEY_2; break;
+		   case 0x00FD40BF: decodedValue =  KEY_3; break;
+		   case 0x00FD20DF: decodedValue =  KEY_4; break;
+                   case 0x00FDA05F: decodedValue =  KEY_5; break;
+                   case 0x00FD609F: decodedValue = KEY_6; break;
+                   case 0x00FD10EF: decodedValue =  KEY_7; break;
+                   case 0x00FD906F: decodedValue =  KEY_8; break;
+                   case 0x00FD50AF: decodedValue =  KEY_9; break;
+		   case 0x00FD30CF: decodedValue = KEY_STAR; break;   
+                   case 0x00FD708F: decodedValue = KEY_HASH; break;
+                   case 0x00FD8877: decodedValue = KEY_UP; break;
+                   case 0x00FD9867: decodedValue = KEY_DOWN; break;
+                   case 0x00FD28D7: decodedValue = KEY_LEFT; break;
+                   case 0x00FD6897: decodedValue = KEY_RIGHT; break;
+                   case 0x00FDA857: decodedValue = KEY_OK; break;
+                   default: break;
+              }
+             irRemote.resume(); // receive next Infrared decode
+     }
+	return decodedValue;
 }
