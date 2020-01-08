@@ -5,6 +5,7 @@
 #######################################
 # Datatypes (KEYWORD1)
 #######################################
+remoteControlKeys KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
@@ -17,6 +18,11 @@ spinRight KEYWORD2
 stop KEYWORD2
 soundHorn KEYWORD2
 flashLeftAndRightLights KEYWORD2
+waitForButtonPress KEYWORD2
+measureFrontDistance KEYWORD2
+readLeftIRSensor KEYWORD2
+readRightIRSensor KEYWORD2     
+readIRRemote KEYWORD2
 
 #######################################
 # Constants (LITERAL1)
