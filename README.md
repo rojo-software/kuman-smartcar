@@ -28,12 +28,23 @@ Flashes car lights on/off for specified number of cycles
 ## `waitForButtonPress()`
 Pauses loop execution until button pressed
 
-## `measureFrontDistance()`
+## `unsigned int measureFrontDistance()`
 Uses ultrasonic detector to measure distance from object in front of car.
 Returns value in cm.
 
+## `unsigned int readLeftIRSensor()`
+Read state of left IR sensor.
+Returns LOW if object detected, otherwise HIGH
+
+## `unsigned int readRightIRSensor()`
+Read state of right IR sensor.
+Returns LOW if object detected, otherwise HIGH
+  
+## `remoteControlKeys readIRRemote()`
+Read remote control key press.
+Returns value from `remoteControlKeys` enumeration (see .h file for details)
+
 # TODO
 * Add variable speed control for motors
-* Add sample & hold for ultrasonic measurement
-* Add support for IR detector
 * Add support for IR line following
+* Bluetooth handling
