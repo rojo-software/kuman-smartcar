@@ -45,6 +45,7 @@ Read remote control key press.
 Returns value from `remoteControlKeys` enumeration (see .h file for details)
 
 # TODO
+* example code
 * Add variable speed control for motors
 * Add support for IR line following
 * Bluetooth handling
