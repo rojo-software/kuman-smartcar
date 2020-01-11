@@ -38,6 +38,7 @@
 #define REVERSE_SPEED_PWM 127
 #define SPIN_LEFT_SPEED_PWM 180
 #define SPIN_RIGHT_SPEED_PWM 180
+#define MOTOR_STOPPED_PWM 0
 
 decode_results irRemoteResults; 
 IRrecv irRemote(IR_RX);
@@ -71,44 +72,54 @@ void KumanSmartCar::begin(void)
 
 }
 
-void KumanSmartCar::forward(void)
-{
+void setMotorEnablesForward(void) {
   digitalWrite(RIGHT_MOTOR_IN1, HIGH);
   digitalWrite(RIGHT_MOTOR_IN2, LOW);
 
   digitalWrite(LEFT_MOTOR_IN1, HIGH);
   digitalWrite(LEFT_MOTOR_IN2, LOW);
+}
 
+void setMotorEnablesReverse(void) {
+  digitalWrite(RIGHT_MOTOR_IN1, LOW);
+  digitalWrite(RIGHT_MOTOR_IN2, HIGH);
+
+  digitalWrite(LEFT_MOTOR_IN1, LOW);
+  digitalWrite(LEFT_MOTOR_IN2, HIGH);
+}
+
+void KumanSmartCar::forward(void)
+{
+  setMotorEnablesForward();
   analogWrite(RIGHT_MOTOR_EN, FORWARD_SPEED_PWM);
   analogWrite(LEFT_MOTOR_EN, FORWARD_SPEED_PWM);
 }
 
 void KumanSmartCar::reverse(void)
 {
-  digitalWrite(RIGHT_MOTOR_IN1, LOW);
-  digitalWrite(RIGHT_MOTOR_IN2, HIGH);
-
-  digitalWrite(LEFT_MOTOR_IN1, LOW);
-  digitalWrite(LEFT_MOTOR_IN2, HIGH);
-
+  setMotorEnablesReverse();
   analogWrite(RIGHT_MOTOR_EN, REVERSE_SPEED_PWM);
   analogWrite(LEFT_MOTOR_EN, REVERSE_SPEED_PWM);
 }
 
+/*
+* Hard turn to left
+*/
 void KumanSmartCar::spinLeft(void)
 {
-  digitalWrite(RIGHT_MOTOR_IN1, HIGH);
-  digitalWrite(RIGHT_MOTOR_IN2, LOW);
-
+  setMotorEnablesForward();
   analogWrite(RIGHT_MOTOR_EN, SPIN_LEFT_SPEED_PWM);
+  analogWrite(LEFT_MOTOR_EN, MOTOR_STOPPED_PWM);
 }
 
+/*
+* Hard turn to right
+*/ 
 void KumanSmartCar::spinRight(void)
 {
-  digitalWrite(LEFT_MOTOR_IN1, HIGH);
-  digitalWrite(LEFT_MOTOR_IN2, LOW);
-
+  setMotorEnablesForward();
   analogWrite(LEFT_MOTOR_EN, SPIN_RIGHT_SPEED_PWM);
+  analogWrite(RIGHT_MOTOR_EN, MOTOR_STOPPED_PWM);
 }
 
 void KumanSmartCar::stop(void)
@@ -138,6 +149,34 @@ void KumanSmartCar::flashLeftAndRightLights(unsigned int numCycles)
     digitalWrite(RIGHT_LED,HIGH);
     delay(400);
     digitalWrite(LEFT_LED,LOW);
+    digitalWrite(RIGHT_LED,LOW);
+    delay(400);    
+  } 
+}
+
+/*
+ * Flash lights L for specified number of cycles
+ */
+void KumanSmartCar::flashLeftLights(unsigned int numCycles) 
+{
+  for (int cycles=0;cycles < numCycles; cycles++)
+  {
+    digitalWrite(LEFT_LED,HIGH);
+    delay(400);
+    digitalWrite(LEFT_LED,LOW);
+    delay(400);    
+  } 
+}
+
+/*
+ * Flash lights R for specified number of cycles
+ */
+void KumanSmartCar::flashRightLights(unsigned int numCycles) 
+{
+  for (int cycles=0;cycles < numCycles; cycles++)
+  {
+    digitalWrite(RIGHT_LED,HIGH);
+    delay(400);
     digitalWrite(RIGHT_LED,LOW);
     delay(400);    
   } 

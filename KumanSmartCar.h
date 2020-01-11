@@ -16,6 +16,8 @@ class KumanSmartCar
     void stop(void);
     void soundHorn(unsigned int time);
     void flashLeftAndRightLights(unsigned int numCycles);
+    void flashLeftLights(unsigned int numCycles);
+    void flashRightLights(unsigned int numCycles);
     void waitForButtonPress(void);
     unsigned int measureFrontDistance(void);
     unsigned int readLeftIRSensor(void);

@@ -18,6 +18,8 @@ spinRight KEYWORD2
 stop KEYWORD2
 soundHorn KEYWORD2
 flashLeftAndRightLights KEYWORD2
+flashLeftLights KEYWORD2
+flashRightLights KEYWORD2
 waitForButtonPress KEYWORD2
 measureFrontDistance KEYWORD2
 readLeftIRSensor KEYWORD2
