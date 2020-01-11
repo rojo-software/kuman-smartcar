@@ -25,6 +25,12 @@ Sounds horn (buzzer) for specified number of mS
 ## `flashLeftAndRightLights(unsigned int numCycles)`
 Flashes car lights on/off for specified number of cycles
 
+## `flashLeftLights(unsigned int numCycles)`
+Flashes LH car lights on/off for specified number of cycles
+
+## `flashRightLights(unsigned int numCycles)`
+Flashes RH car lights on/off for specified number of cycles
+
 ## `waitForButtonPress()`
 Pauses loop execution until button pressed
 
@@ -45,7 +51,6 @@ Read remote control key press.
 Returns value from `remoteControlKeys` enumeration (see .h file for details)
 
 # TODO
-* example code
 * Add variable speed control for motors
 * Add support for IR line following
 * Bluetooth handling
