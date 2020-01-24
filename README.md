@@ -50,7 +50,10 @@ Returns LOW if object detected, otherwise HIGH
 Read remote control key press.
 Returns value from `remoteControlKeys` enumeration (see .h file for details)
 
+## `String readBluetoothString()`
+Read Bluetooth string - from original Kuman software string must start with `$` and finish with `#`
+
 # TODO
 * Add variable speed control for motors
 * Add support for IR line following
-* Bluetooth handling
+* Expand example code to include Bluetooth control
