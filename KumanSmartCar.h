@@ -23,8 +23,11 @@ class KumanSmartCar
     unsigned int readLeftIRSensor(void);
     unsigned int readRightIRSensor(void);     
     remoteControlKeys readIRRemote(void);
+    String readBluetoothString(void);
   private:
     unsigned int lastFrontDistance;
 };
+
+void bluetoothEventHandler(void);
 
 #endif

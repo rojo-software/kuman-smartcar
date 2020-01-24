@@ -25,6 +25,7 @@ measureFrontDistance KEYWORD2
 readLeftIRSensor KEYWORD2
 readRightIRSensor KEYWORD2     
 readIRRemote KEYWORD2
+readBluetoothString KEYWORD2
 
 #######################################
 # Constants (LITERAL1)

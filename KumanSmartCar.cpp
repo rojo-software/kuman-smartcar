@@ -67,6 +67,7 @@ void KumanSmartCar::begin(void)
     pinMode(RIGHT_INFRARED_TRACK, INPUT);
 
     irRemote.enableIRIn();
+    Serial.begin(9600);  // Bluetooth baud rate 9600
 
     this->lastFrontDistance =10; // Initialise with arbitrary value
 
@@ -281,4 +282,61 @@ remoteControlKeys KumanSmartCar::readIRRemote(void)
              irRemote.resume(); // receive next Infrared decode
      }
 	return decodedValue;
+}
+
+/* 
+* Bluetooth state
+*/
+struct bluetoothState 
+{
+    int incomingByte = 0; 
+    boolean startBit = false;
+    boolean newLineReceived = false;
+   String inputString = "";   	
+};
+
+struct bluetoothState bState;
+
+String KumanSmartCar::readBluetoothString(void)
+{
+  String stringToReturn;
+  if (bState.newLineReceived)
+  {
+    stringToReturn = bState.inputString;
+    bState.inputString = "";   // clear the string
+    bState.newLineReceived = false;
+  }
+  return stringToReturn;
+}
+
+/*
+* Serial port reads for Bluetooth
+*/
+void bluetoothEventHandler(struct bluetoothState *statePtr)
+{
+  while (Serial.available())
+  {
+    statePtr->incomingByte = Serial.read();   //Read one byte
+    if (statePtr->incomingByte == '$')  // '$' means the start of packet
+    {
+      statePtr->startBit = true;
+    }
+    if (statePtr->startBit == true)
+    {
+      statePtr->inputString += (char) statePtr->incomingByte;     // The received data constitutes a completed packet.
+    }
+    if (statePtr->incomingByte == '#')    // '#' means the end of packet
+    {
+      statePtr->newLineReceived = true;
+      statePtr->startBit = false;
+    }
+  }
+} 
+
+/*
+* serialEvent function name links to Arduino serial handler.
+*/ 
+void serialEvent()
+{
+	bluetoothEventHandler(&bState);
 }
